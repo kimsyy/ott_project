@@ -2,12 +2,22 @@ import React from "react";
 import { styled } from "styled-components";
 
 const Wrap = styled.header`
-  position: sticky;
+  z-index: 10;
+  position: fixed;
   top: 0;
   left: 0;
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 20px 40px;
+  width: 100%;
+  height: 90px;
+  box-sizing: border-box;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 0)
+  );
+  backdrop-filter: blur(0);
 `;
 
 const Logo = styled.h1`
