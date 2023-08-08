@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef} from "react";
 import { styled } from "styled-components";
 import axios from "../api/axios";
-import requests from "../api/request";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { MOVIE_IMG_URL } from "../constants/path";
 
 interface ListData {
   adult: boolean;
@@ -34,16 +38,50 @@ interface Props {
   length?: number;
 }
 
-const Wrap = styled.div``;
+const Wrap = styled.div`
+  margin-bottom:40px;
+`;
 
-const Title = styled.div``;
+const Title = styled.div`
+  margin:0 0 20px 20px;
+  font-size:1.4rem;
+  font-weight:bold;
+`;
 
-const List = styled.ol``;
+const SwiperSlideItem = styled(SwiperSlide)`
+  width: 20%;
 
-const Item = styled.li``;
+  &:first-child{
+    margin-left:20px;
+  }
+
+  .wrap-img {
+    width:100%;
+    height:100%;
+
+    img {
+      width:100%;
+      height:auto;
+      object-fit:cover;
+      border-radius:4px;
+    }
+  }
+  .title{
+    margin-top: 10px;
+    font-size:1.2rem;
+    line-height:1.4;
+  }
+`
 
 function Row({title, fetchUrl, type = RowType.DEFAULT, length = 10}: Props) {
+  const swiperOption = {
+    modules: [Navigation],
+    navigation: true,
+    slidesPerView: 'auto',
+    spaceBetween: 20,
+  };
   const [listData, setListData] = useState<ListData[] | null>(null);
+
   useEffect(() => {
     fetchList();
   }, []);
@@ -55,7 +93,14 @@ function Row({title, fetchUrl, type = RowType.DEFAULT, length = 10}: Props) {
 
   const renderList = () => {
     return listData?.map(item => {
-      return <Item>{item.title}</Item>;
+      return (
+        <SwiperSlideItem key={item.id}>
+          <div className="wrap-img">
+            <img src={MOVIE_IMG_URL + item.backdrop_path} alt={item.title}/>
+          </div>
+          <div className="title">{item.title}</div>
+        </SwiperSlideItem>
+      );
     });
   };
 
@@ -66,7 +111,9 @@ function Row({title, fetchUrl, type = RowType.DEFAULT, length = 10}: Props) {
   return (
     <Wrap>
       <Title>{title}</Title>
-      <List>{renderList()}</List>
+      <Swiper {...swiperOption}>
+        {renderList()}
+      </Swiper>
     </Wrap>
   );
 }
