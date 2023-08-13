@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from "react";
+import React, { useEffect, useState} from "react";
 import { styled } from "styled-components";
 import axios from "../api/axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -6,8 +6,9 @@ import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { MOVIE_IMG_URL } from "../constants/path";
+import ModalMovieDetail from './Modal/ModalMovieDetail';
 
-interface ListData {
+export interface MovieType {
   adult: boolean;
   backdrop_path: string;
   genre_ids: object;
@@ -80,7 +81,10 @@ function Row({title, fetchUrl, type = RowType.DEFAULT, length = 10}: Props) {
     slidesPerView: 'auto',
     spaceBetween: 20,
   };
-  const [listData, setListData] = useState<ListData[] | null>(null);
+  const [listData, setListData] = useState<MovieType[] | null>(null);
+
+  const [onModal, setOnModal] = useState(false);
+  const [selectedMovie, setSelectedMovie]= useState<MovieType | null>(null);
 
   useEffect(() => {
     fetchList();
@@ -91,10 +95,15 @@ function Row({title, fetchUrl, type = RowType.DEFAULT, length = 10}: Props) {
     setListData(data.results.slice(0,length));
   };
 
+  const handleSlideClick = (movie: MovieType) => {
+    setOnModal(true);
+    setSelectedMovie(movie);
+  }
+
   const renderList = () => {
     return listData?.map(item => {
       return (
-        <SwiperSlideItem key={item.id}>
+        <SwiperSlideItem key={item.id} onClick={() => handleSlideClick(item)}>
           <div className="wrap-img">
             <img src={MOVIE_IMG_URL + item.backdrop_path} alt={item.title}/>
           </div>
@@ -114,6 +123,7 @@ function Row({title, fetchUrl, type = RowType.DEFAULT, length = 10}: Props) {
       <Swiper {...swiperOption}>
         {renderList()}
       </Swiper>
+      {onModal && <ModalMovieDetail setOnModal={setOnModal} data={selectedMovie} />}
     </Wrap>
   );
 }
