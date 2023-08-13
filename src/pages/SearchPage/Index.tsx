@@ -6,6 +6,7 @@ import Axios from "../../api/axios";
 import requests from "../../api/request";
 import { MovieType } from "../../components/Row";
 import { MOVIE_IMG_URL } from "../../constants/path";
+import useDebounce from "../../hooks/useDebounce";
 
 const Wrap = styled.div``;
 
@@ -50,18 +51,20 @@ const Item = styled.li`
 function SearchPage() {
   const navigate = useNavigate();
   const [searchResults, setSearchResults] = useState<MovieType[]>([]);
+
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
   };
 
   let query = useQuery();
-  const searchTerm = query.get("q");
+
+  const debounceSearchTerm = useDebounce(query.get("q"), 500);
 
   useEffect(() => {
-    if (searchTerm) {
-      fetchSearchMovie(searchTerm);
+    if (debounceSearchTerm) {
+      fetchSearchMovie(debounceSearchTerm);
     }
-  }, [searchTerm]);
+  }, [debounceSearchTerm]);
 
   const fetchSearchMovie = async (searchTerm: String) => {
     try {
