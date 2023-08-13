@@ -23,6 +23,7 @@ export interface MovieType {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  name?: string;
 }
 
 export const RowType = {

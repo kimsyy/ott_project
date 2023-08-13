@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 
-const Wrap = styled.header`
-  z-index: 10;
+const Wrap = styled.header<{
+  isActive: boolean;
+}>`
+  z-index: 100;
   position: fixed;
   top: 0;
   left: 0;
@@ -18,6 +21,14 @@ const Wrap = styled.header`
     rgba(0, 0, 0, 0)
   );
   backdrop-filter: blur(0);
+
+  ${props => {
+    if (props.isActive) {
+      return `
+        background-color:#111;
+      `;
+    }
+  }}
 `;
 
 const Logo = styled.h1`
@@ -53,9 +64,54 @@ const Util = styled.div`
   margin-left: auto;
 `;
 
+const Login = styled.button``;
+
+const Input = styled.input`
+  width: 200px;
+  padding: 10px;
+  color: #fff;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  border: 0;
+  background-color: #000;
+  outline: 0;
+`;
+
 function Header() {
+  const { pathname } = useLocation();
+  const [isActive, setIsActive] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
+  const navigate = useNavigate();
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (window.scrollY > headerHeight) {
+      setIsActive(true);
+    } else {
+      setIsActive(false);
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (headerRef.current === null) return;
+    setHeaderHeight(headerRef.current.offsetHeight);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [headerHeight]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+    navigate(`/search?q=${e.target.value}`);
+  };
+
   return (
-    <Wrap>
+    <Wrap isActive={isActive} ref={headerRef}>
       <Logo>OTT PROJECT</Logo>
       <Nav>
         <ul>
@@ -67,7 +123,17 @@ function Header() {
           </li>
         </ul>
       </Nav>
-      <Util>검색</Util>
+      <Util>
+        {pathname === "/" ? (
+          <Login />
+        ) : (
+          <Input
+            type="text"
+            placeholder="검색어를 입력하세요"
+            onChange={handleInputChange}
+          />
+        )}
+      </Util>
     </Wrap>
   );
 }

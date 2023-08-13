@@ -3,7 +3,8 @@ const requests = {
   fetchMovieDetail: "movie/",
   fetchMovieTopRank: "movie/top_rated",
   fetchMoviePopular: "movie/popular",
-  fetchMovieUpcoming: "movie/upcoming"
+  fetchMovieUpcoming: "movie/upcoming",
+  fetchSearchMulti: "search/multi"
 };
 
 export default requests;

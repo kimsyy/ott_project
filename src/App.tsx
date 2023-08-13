@@ -4,6 +4,7 @@ import { createGlobalStyle, styled } from "styled-components";
 import reset from "styled-reset";
 import MainPage from "./pages/MainPage/Index";
 import Header from "./components/Header";
+import SearchPage from "./pages/SearchPage/Index";
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -32,6 +33,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="main" element={<MainPage />} />
+          <Route path="search" element={<SearchPage />} />
         </Route>
       </Routes>
     </React.Fragment>
